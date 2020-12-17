@@ -1,6 +1,39 @@
 function funs = makefuns
   funs.load_data=@load_data;
-  funs.fun2=@fun2;
+  funs.max_norm=@max_norm;
+  funs.remove_i=@remove_i;
+  funs.get_derivative=@get_derivative;
+  funs.norm_time_by_place=@norm_time_by_place;
+end
+
+function [d] = get_derivative(x, t)
+    d = zeros(numel(x),1);
+    d(1) = 0; % d at t0 is undefined, since we need to compute x2-x1/t2-t1...
+    for i = 2:numel(t)
+        d(i) = (d(i) - d(i - 1)) / (t(i) - t(i - 1));
+    end
+end
+
+function [a, b] = remove_i(i ,a, b)
+    a(i) = [];
+    b(i) = [];
+end
+
+function [x, t] = norm_time_by_place(place, x, t)
+    first_index = find(x>place,1);
+    x = x(first_index:end);
+    t = t(first_index:end);
+    t = min_norm(t);
+end
+
+function [v] = max_norm(i)
+    max_i = max(i);
+    v = i - max_i;
+end
+
+function [v] = min_norm(i)
+    min_i = min(i);
+    v = i - min_i;
 end
 
 function [experiements] = load_data(grab)
@@ -13,7 +46,6 @@ function [experiements] = load_data(grab)
             continue;
         end
         [~,SheetNames]  = xlsfinfo(file);
-   %     SheetNames
         for i = 1:length(SheetNames) % iterate through sheets in file
             sheet_name = SheetNames{i};
             e = read_ex(file, sheet_name);
@@ -22,19 +54,19 @@ function [experiements] = load_data(grab)
     end
 end
 
-function [experiement] = read_ex(file, sheet_name)
- %   sheet_data = readtable(file, 'Sheet', sheet_name);
-    
+function [experiement] = read_ex(file, sheet_name)    
     experiement = ex;
     experiement.file = file;
-    experiement.sheet = sheet_name;
+    experiement.sheet = strrep(string(sheet_name), "_", " ");
     experiement.material = get_material(sheet_name);
     experiement.mass = get_mass(experiement.material);
     experiement.liquid = get_liquid(sheet_name);
     experiement.water_level = get_water_level(sheet_name);
-  %  t = table2array(sheet_data(:, 't'));
-  %  x = table2array(sheet_data(:, 'x')); % usually don't care about this
-  %  y = table2array(sheet_data(:, 'y'));
+    
+    sheet_data = readtable(file, 'Sheet', sheet_name);
+    experiement.t = table2array(sheet_data(:, 't'));
+    experiement.x = table2array(sheet_data(:, 'x'));
+    experiement.y = table2array(sheet_data(:, 'y'));
 end
 
 function [level] = get_water_level(sheet_name)
@@ -90,8 +122,4 @@ function [mass] = get_mass(material)
     elseif strcmp(material,'KALKAR_SMALL_RED')
         mass = 0.00004 / 36;
     end
-end
-
-function z=fun2
-  z=1;
 end
