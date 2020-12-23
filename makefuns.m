@@ -1,6 +1,7 @@
 function funs = makefuns
   funs.load_data=@load_data;
   funs.max_norm=@max_norm;
+  funs.min_norm=@min_norm;
   funs.remove_i=@remove_i;
   funs.get_derivative=@get_derivative;
   funs.norm_time_by_place=@norm_time_by_place;
@@ -10,7 +11,7 @@ function [d] = get_derivative(x, t)
     d = zeros(numel(x),1);
     d(1) = 0; % d at t0 is undefined, since we need to compute x2-x1/t2-t1...
     for i = 2:numel(t)
-        d(i) = (d(i) - d(i - 1)) / (t(i) - t(i - 1));
+        d(i) = (x(i) - x(i - 1)) / (t(i) - t(i - 1));
     end
 end
 
@@ -62,9 +63,13 @@ function [experiement] = read_ex(file, sheet_name)
     experiement.mass = get_mass(experiement.material);
     experiement.liquid = get_liquid(sheet_name);
     experiement.water_level = get_water_level(sheet_name);
+    experiement.angle = get_angle(sheet_name);
     
     sheet_data = readtable(file, 'Sheet', sheet_name);
     experiement.t = table2array(sheet_data(:, 't'));
+    if ~strcmp(experiement.water_level, '100') || ~strcmp(experiement.angle, '0')
+        experiement.t = experiement.t.*4;
+    end
     experiement.x = table2array(sheet_data(:, 'x'));
     experiement.y = table2array(sheet_data(:, 'y'));
 end
@@ -80,6 +85,20 @@ function [level] = get_water_level(sheet_name)
         level = '3';
     elseif contains(sheet_name, 'WATER_LEVEL_4')
         level = '4';
+    end
+end
+
+function [material] = get_angle(sheet_name)
+    default_material = '0'; 
+    material = default_material;
+    if contains(sheet_name, 'A1')
+        material = 'A1';
+    elseif contains(sheet_name, 'A2')
+        material = 'A2';
+    elseif contains(sheet_name, 'A3')
+        material = 'A3';
+    elseif contains(sheet_name, 'A4')
+        material = 'A4';
     end
 end
 
