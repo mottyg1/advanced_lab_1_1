@@ -17,6 +17,7 @@ classdef ex
       color_material
       color_angle
       color_liquid
+      color_file
       color_water_level
    end
    methods
@@ -24,7 +25,7 @@ classdef ex
          c = obj.material;
          switch c
             case 'KALKAR_SMALL_RED'
-               v = 'r';
+               v = 'k';
             case 'KALKAR_HUGE_RED'
                v = 'm';
             case 'KALKAR_MED_BLUE'
@@ -32,7 +33,21 @@ classdef ex
             case 'CHEERIO'
                v = 'g';
             case 'SILVER'
-               v = 'k';
+               v = 'r';
+            otherwise
+               v = 'y';
+         end
+         value = v;
+       end
+       function value = get.color_file(obj)
+         c = obj.file;
+         switch c
+            case 'angles.xlsx'
+               v = 'r';
+            case 'water_level_experiment_raw_data.xlsx'
+               v = 'g';
+            case 'data2.xlsx'
+               v = 'b';
             otherwise
                v = 'y';
          end

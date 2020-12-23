@@ -45,9 +45,9 @@ for i = 1:length(expers)
     force = 2*curve.p1;
     
     figure(1);
-    scatter(t, r, e.color_liquid, e.marker);
+    scatter(t, r, e.color_file, e.marker);
     figure(2);
-    scatter(1, force, e.color_liquid, e.marker);
+    scatter(1, force, e.color_file, e.marker);
     names = [names, e.sheet];
 end
 
