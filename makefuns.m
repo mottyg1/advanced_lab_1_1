@@ -67,7 +67,7 @@ function [experiement] = read_ex(file, sheet_name)
     
     sheet_data = readtable(file, 'Sheet', sheet_name);
     experiement.t = table2array(sheet_data(:, 't'));
-    if ~strcmp(experiement.water_level, '100') || ~strcmp(experiement.angle, '0')
+    if ~strcmp(experiement.water_level, '100') % || ~strcmp(experiement.angle, '0')
         experiement.t = experiement.t.*4;
     end
     experiement.x = table2array(sheet_data(:, 'x'));

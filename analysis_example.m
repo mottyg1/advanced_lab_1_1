@@ -42,12 +42,12 @@ for i = 1:length(expers)
     t = f.min_norm(t);
     
     curve = fit(t,r,fittype('poly2'));
-    force = 2*curve.p1;
+    force = 2*curve.p1*e.mass;
     
     figure(1);
-    scatter(t, r, e.color_file, e.marker);
+    scatter(t, r, e.color_angle, e.marker);
     figure(2);
-    scatter(1, force, e.color_file, e.marker);
+    scatter(1, force, e.color_angle, e.marker);
     names = [names, e.sheet];
 end
 
